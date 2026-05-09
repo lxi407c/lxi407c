@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50">
+  <!-- 엔진 불꽃 -->
+  <polygon points="18,48 25,38 32,48" fill="#FF6600" opacity="0.9"/>
+  <polygon points="21,48 25,42 29,48" fill="#FFCC00"/>
+  <!-- 동체 -->
+  <polygon points="25,2 38,38 12,38" fill="#4488FF"/>
+  <!-- 조종석 -->
+  <ellipse cx="25" cy="20" rx="7" ry="9" fill="#88CCFF"/>
+  <!-- 날개 왼쪽 -->
+  <polygon points="12,38 2,44 10,30" fill="#2266DD"/>
+  <!-- 날개 오른쪽 -->
+  <polygon points="38,38 48,44 40,30" fill="#2266DD"/>
+  <!-- 조종석 빛 반사 -->
+  <ellipse cx="23" cy="17" rx="3" ry="4" fill="white" opacity="0.4"/>
+</svg>

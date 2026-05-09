@@ -11,7 +11,7 @@ const SAVE_PATH = "user://highscore.dat"
 
 var state: State = State.MENU
 
-var player: ColorRect
+var player: TextureRect
 var score_label: Label
 var life_label: Label
 var highscore_label: Label
@@ -66,9 +66,10 @@ func _setup_background() -> void:
 
 # ── 플레이어 ──────────────────────────────────────────
 func _setup_player() -> void:
-	player = ColorRect.new()
-	player.color = Color(0.2, 0.8, 0.4)
+	player = TextureRect.new()
+	player.texture = load("res://player.svg")
 	player.size = Vector2(50, 50)
+	player.stretch_mode = TextureRect.STRETCH_SCALE
 	player.visible = false
 	add_child(player)
 
@@ -252,8 +253,7 @@ func _start_game() -> void:
 	rocks.clear()
 
 	player.position = Vector2(SCREEN_W / 2 - 25, SCREEN_H - 100)
-	player.color = Color(0.2, 0.8, 0.4)
-	player.modulate.a = 1.0
+	player.modulate = Color.WHITE
 	player.visible = true
 
 	score_label.visible = true
@@ -332,7 +332,7 @@ func _process(delta: float) -> void:
 		invincible_timer -= delta
 		player.modulate.a = 0.3 if int(invincible_timer * 10) % 2 == 0 else 1.0
 	else:
-		player.modulate.a = 1.0
+		player.modulate = Color.WHITE
 
 
 func _move_player(delta: float) -> void:
@@ -362,10 +362,11 @@ func _spawn_rocks(delta: float) -> void:
 	spawn_timer -= delta
 	if spawn_timer <= 0:
 		spawn_timer = max(0.3, ROCK_SPAWN_INTERVAL - score * 0.01)
-		var rock = ColorRect.new()
-		var size = randf_range(20, 50)
+		var rock = TextureRect.new()
+		rock.texture = load("res://rock.svg")
+		var size = randf_range(30, 55)
 		rock.size = Vector2(size, size)
-		rock.color = Color(randf_range(0.5, 1.0), randf_range(0.2, 0.5), 0.1)
+		rock.stretch_mode = TextureRect.STRETCH_SCALE
 		rock.position = Vector2(randf_range(0, SCREEN_W - size), -size)
 		add_child(rock)
 		rocks.append(rock)
