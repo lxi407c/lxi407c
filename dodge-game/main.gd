@@ -11,6 +11,7 @@ var score_label: Label
 var life_label: Label
 var game_over_label: Label
 var restart_label: Label
+var restart_button: Button
 
 var rocks: Array = []
 var score: float = 0.0
@@ -19,6 +20,10 @@ var rock_speed: float = ROCK_SPEED_START
 var spawn_timer: float = 0.0
 var game_running: bool = false
 var invincible_timer: float = 0.0
+
+# 터치/마우스 이동 목적지
+var touch_target: Vector2 = Vector2(-1, -1)
+var is_touching: bool = false
 
 
 func _ready() -> void:
@@ -60,17 +65,25 @@ func _setup_ui() -> void:
 	game_over_label.text = "GAME OVER"
 	game_over_label.add_theme_font_size_override("font_size", 48)
 	game_over_label.add_theme_color_override("font_color", Color.RED)
-	game_over_label.position = Vector2(SCREEN_W / 2 - 130, SCREEN_H / 2 - 60)
+	game_over_label.position = Vector2(SCREEN_W / 2 - 130, SCREEN_H / 2 - 80)
 	game_over_label.visible = false
 	add_child(game_over_label)
 
 	restart_label = Label.new()
-	restart_label.text = "SPACE 키로 재시작"
-	restart_label.add_theme_font_size_override("font_size", 28)
+	restart_label.add_theme_font_size_override("font_size", 26)
 	restart_label.add_theme_color_override("font_color", Color.YELLOW)
-	restart_label.position = Vector2(SCREEN_W / 2 - 120, SCREEN_H / 2 + 10)
+	restart_label.position = Vector2(SCREEN_W / 2 - 110, SCREEN_H / 2 - 10)
 	restart_label.visible = false
 	add_child(restart_label)
+
+	# 터치용 재시작 버튼
+	restart_button = Button.new()
+	restart_button.text = "다시 시작"
+	restart_button.size = Vector2(160, 55)
+	restart_button.position = Vector2(SCREEN_W / 2 - 80, SCREEN_H / 2 + 70)
+	restart_button.visible = false
+	restart_button.pressed.connect(_start_game)
+	add_child(restart_button)
 
 
 func _start_game() -> void:
@@ -80,6 +93,8 @@ func _start_game() -> void:
 	spawn_timer = 0.0
 	invincible_timer = 0.0
 	game_running = true
+	touch_target = Vector2(-1, -1)
+	is_touching = false
 
 	for rock in rocks:
 		rock.queue_free()
@@ -89,6 +104,35 @@ func _start_game() -> void:
 	player.color = Color(0.2, 0.8, 0.4)
 	game_over_label.visible = false
 	restart_label.visible = false
+	restart_button.visible = false
+
+
+func _input(event: InputEvent) -> void:
+	# 터치 입력
+	if event is InputEventScreenTouch:
+		if event.pressed:
+			is_touching = true
+			touch_target = event.position
+		else:
+			is_touching = false
+			touch_target = Vector2(-1, -1)
+
+	elif event is InputEventScreenDrag:
+		touch_target = event.position
+
+	# 마우스 클릭으로 이동
+	elif event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			if event.pressed:
+				is_touching = true
+				touch_target = event.position
+			else:
+				is_touching = false
+				touch_target = Vector2(-1, -1)
+
+	elif event is InputEventMouseMotion:
+		if is_touching:
+			touch_target = event.position
 
 
 func _process(delta: float) -> void:
@@ -115,6 +159,8 @@ func _process(delta: float) -> void:
 
 func _move_player(delta: float) -> void:
 	var velocity = Vector2.ZERO
+
+	# 키보드 입력
 	if Input.is_action_pressed("ui_left"):
 		velocity.x -= 1
 	if Input.is_action_pressed("ui_right"):
@@ -123,6 +169,13 @@ func _move_player(delta: float) -> void:
 		velocity.y -= 1
 	if Input.is_action_pressed("ui_down"):
 		velocity.y += 1
+
+	# 터치/마우스 입력 (키보드보다 우선)
+	if is_touching and touch_target != Vector2(-1, -1):
+		var player_center = player.position + player.size / 2
+		var dir = touch_target - player_center
+		if dir.length() > 10:
+			velocity = dir.normalized()
 
 	player.position += velocity.normalized() * PLAYER_SPEED * delta
 	player.position.x = clamp(player.position.x, 0, SCREEN_W - player.size.x)
@@ -176,5 +229,6 @@ func _update_ui() -> void:
 func _game_over() -> void:
 	game_running = false
 	game_over_label.visible = true
+	restart_label.text = "최종 점수: %d\nSPACE 또는 버튼으로 재시작" % int(score)
 	restart_label.visible = true
-	restart_label.text = "최종 점수: %d\nSPACE 키로 재시작" % int(score)
+	restart_button.visible = true
