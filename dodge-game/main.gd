@@ -72,7 +72,7 @@ const EMOTION_OUTLINE_COLOR: Dictionary = {
 var chat_bg_effect: TextureRect
 var chat_portrait_glow: TextureRect
 var chat_text_scroll: ScrollContainer
-var portrait_shader_mat: ShaderMaterial  # reserved for future outline shader
+var portrait_shader_mat: ShaderMaterial
 
 # 인트로 대화 UI
 var dialogue_panel: CanvasLayer
@@ -193,6 +193,9 @@ func _detect_emotion(text: String) -> String:
 func _set_portrait_emotion(emotion: String) -> void:
 	if chat_response_portrait and emotion_textures.has(emotion):
 		chat_response_portrait.texture = emotion_textures[emotion]
+	if portrait_shader_mat:
+		portrait_shader_mat.set_shader_parameter("outline_color",
+			EMOTION_OUTLINE_COLOR.get(emotion, EMOTION_OUTLINE_COLOR["neutral"]))
 	if chat_portrait_glow and emotion_textures.has(emotion):
 		chat_portrait_glow.texture = emotion_textures[emotion]
 		chat_portrait_glow.modulate = EMOTION_GLOW_MOD.get(emotion, EMOTION_GLOW_MOD["neutral"])
@@ -290,6 +293,55 @@ void fragment() {
 	mat.set_shader_parameter("blur_px", blur_px)
 	return mat
 
+
+func _make_outline_material(c: Color, px: float = 14.0) -> ShaderMaterial:
+	var sh = Shader.new()
+	sh.code = """
+shader_type canvas_item;
+uniform float outline_px    : hint_range(0.0, 40.0) = 14.0;
+uniform vec4  outline_color : source_color = vec4(0.55, 0.70, 1.0, 1.0);
+
+void vertex() {
+    // quad를 outline_px 픽셀 바깥으로 확장 — 경계 clipping 방지
+    VERTEX += (UV * 2.0 - 1.0) * outline_px;
+}
+
+void fragment() {
+    vec4 orig = vec4(0.0);
+    if (UV.x > 0.0 && UV.y > 0.0 && UV.x < 1.0 && UV.y < 1.0)
+        orig = texture(TEXTURE, UV);
+
+    if (orig.a > 0.05) {
+        COLOR = orig;
+    } else {
+        // 소프트 글로우: 4중 링 원형 샘플링 (Gaussian 가중치)
+        float total = 0.0;
+        float wt    = 0.0;
+        for (int ri = 1; ri <= 4; ri++) {
+            float r = TEXTURE_PIXEL_SIZE.x * outline_px * float(ri) * 0.25;
+            float rw = exp(-float(ri * ri) * 0.45);
+            for (int si = 0; si < 16; si++) {
+                float angle = float(si) * TAU / 16.0;
+                vec2 uv = UV + vec2(cos(angle), sin(angle)) * r;
+                if (uv.x > 0.0 && uv.y > 0.0 && uv.x < 1.0 && uv.y < 1.0)
+                    total += texture(TEXTURE, uv).a * rw;
+                wt += rw;
+            }
+        }
+        float glow = clamp(total / wt * 5.5, 0.0, 1.0);
+        if (glow > 0.002) {
+            COLOR = vec4(outline_color.rgb, glow * outline_color.a);
+        } else {
+            discard;
+        }
+    }
+}
+"""
+	var mat = ShaderMaterial.new()
+	mat.shader = sh
+	mat.set_shader_parameter("outline_px", px)
+	mat.set_shader_parameter("outline_color", c)
+	return mat
 
 
 func _add_btn_shine(btn: Button, parent: Node) -> void:
@@ -406,6 +458,7 @@ func _setup_title_ui() -> void:
 	portrait.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	portrait.size = Vector2(270, 270)
 	portrait.position = Vector2(SCREEN_W - 282, 20)
+	portrait.material = _make_outline_material(EMOTION_OUTLINE_COLOR["neutral"], 10.0)
 	title_panel.add_child(portrait)
 
 	# "Dodge" 뒤 블룸 레이어 (넓은 outline → 번지는 글로우 효과)
@@ -522,6 +575,7 @@ func _setup_chat_main_view() -> void:
 	portrait.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	portrait.size = Vector2(200, 200)
 	portrait.position = Vector2(SCREEN_W / 2 - 100, 50)
+	portrait.material = _make_outline_material(EMOTION_OUTLINE_COLOR["neutral"], 10.0)
 	chat_main_view.add_child(portrait)
 
 	# 캐릭터 이름 (mockup: 중앙, white, y=276)
@@ -585,6 +639,7 @@ func _setup_chat_topics_view() -> void:
 	portrait.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	portrait.size = Vector2(130, 130)
 	portrait.position = Vector2(SCREEN_W / 2 - 65, 70)
+	portrait.material = _make_outline_material(EMOTION_OUTLINE_COLOR["neutral"], 10.0)
 	chat_topics_view.add_child(portrait)
 
 	var ask_lbl = Label.new()
@@ -642,11 +697,12 @@ func _setup_chat_response_view() -> void:
 	chat_portrait_glow.material = _make_blur_material(8.0)
 	glow_clip.add_child(chat_portrait_glow)
 
-	# ③ 실제 스탠딩 초상화 (상반신 클립)
+	# ③ 실제 스탠딩 초상화 (상반신 클립) — vertex 확장 glow를 위해 clip을 ow만큼 확장
+	var ow_chat: float = 14.0
 	var portrait_clip = Control.new()
 	portrait_clip.clip_contents = true
-	portrait_clip.position = Vector2(0, 0)
-	portrait_clip.size = Vector2(SCREEN_W, 280)
+	portrait_clip.position = Vector2(-ow_chat, -ow_chat)
+	portrait_clip.size = Vector2(SCREEN_W + ow_chat * 2.0, 280.0 + ow_chat)
 	chat_response_view.add_child(portrait_clip)
 
 	chat_response_portrait = TextureRect.new()
@@ -655,7 +711,9 @@ func _setup_chat_response_view() -> void:
 	chat_response_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	chat_response_portrait.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	chat_response_portrait.size = Vector2(SCREEN_W, roundi(SCREEN_W * STANDING_RATIO))
-	chat_response_portrait.position = Vector2(0, 0)
+	chat_response_portrait.position = Vector2(ow_chat, ow_chat)
+	portrait_shader_mat = _make_outline_material(EMOTION_OUTLINE_COLOR["neutral"])
+	chat_response_portrait.material = portrait_shader_mat
 	portrait_clip.add_child(chat_response_portrait)
 
 	# ④ 하단 그라데이션 페이드 (비네트)
@@ -919,6 +977,7 @@ func _setup_dialogue_ui() -> void:
 	portrait.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	portrait.size = Vector2(280, 280)
 	portrait.position = Vector2(SCREEN_W / 2 - 140, SCREEN_H - 490)
+	portrait.material = _make_outline_material(EMOTION_OUTLINE_COLOR["neutral"], 10.0)
 	dialogue_panel.add_child(portrait)
 
 	var box = ColorRect.new()
@@ -1003,11 +1062,12 @@ func _setup_gameover_ui() -> void:
 	go_glow.material = _make_blur_material(8.0)
 	go_glow_clip.add_child(go_glow)
 
-	# ③ 슬픈 스탠딩 일러스트 클립
+	# ③ 슬픈 스탠딩 일러스트 클립 — vertex 확장 glow를 위해 clip 확장
+	var ow_go: float = 14.0
 	var portrait_clip = Control.new()
 	portrait_clip.clip_contents = true
-	portrait_clip.position = Vector2(0, 0)
-	portrait_clip.size = Vector2(SCREEN_W, 400)
+	portrait_clip.position = Vector2(-ow_go, -ow_go)
+	portrait_clip.size = Vector2(SCREEN_W + ow_go * 2.0, 400.0 + ow_go)
 	gameover_panel.add_child(portrait_clip)
 
 	var portrait = TextureRect.new()
@@ -1016,7 +1076,8 @@ func _setup_gameover_ui() -> void:
 	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	portrait.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	portrait.size = Vector2(SCREEN_W, roundi(SCREEN_W * STANDING_RATIO))
-	portrait.position = Vector2(0, 0)
+	portrait.position = Vector2(ow_go, ow_go)
+	portrait.material = _make_outline_material(EMOTION_OUTLINE_COLOR["sad"])
 	portrait_clip.add_child(portrait)
 
 	# ④ 하단 그라데이션 페이드
