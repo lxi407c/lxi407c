@@ -1,56 +1,84 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="50" height="60" viewBox="0 0 50 60">
-  <!-- 제트팩 불꽃 -->
-  <ellipse cx="18" cy="57" rx="4" ry="5" fill="#FF6600" opacity="0.9"/>
-  <ellipse cx="32" cy="57" rx="4" ry="5" fill="#FF6600" opacity="0.9"/>
-  <ellipse cx="18" cy="56" rx="2.5" ry="3" fill="#FFDD00"/>
-  <ellipse cx="32" cy="56" rx="2.5" ry="3" fill="#FFDD00"/>
+  <!-- 치마 불꽃 (제트) -->
+  <ellipse cx="17" cy="58" rx="4" ry="5" fill="#FF6600" opacity="0.85"/>
+  <ellipse cx="25" cy="59" rx="4" ry="5" fill="#FF4400" opacity="0.85"/>
+  <ellipse cx="33" cy="58" rx="4" ry="5" fill="#FF6600" opacity="0.85"/>
+  <ellipse cx="17" cy="57" rx="2.5" ry="3" fill="#FFDD00"/>
+  <ellipse cx="25" cy="58" rx="2.5" ry="3" fill="#FFDD00"/>
+  <ellipse cx="33" cy="57" rx="2.5" ry="3" fill="#FFDD00"/>
 
   <!-- 다리 -->
-  <rect x="14" y="44" width="8" height="10" rx="3" fill="#3A6BC4"/>
-  <rect x="28" y="44" width="8" height="10" rx="3" fill="#3A6BC4"/>
-  <!-- 발 -->
-  <rect x="12" y="51" width="11" height="5" rx="2" fill="#2A50A0"/>
-  <rect x="27" y="51" width="11" height="5" rx="2" fill="#2A50A0"/>
+  <rect x="15" y="45" width="7" height="9" rx="3" fill="#F4A7B9"/>
+  <rect x="28" y="45" width="7" height="9" rx="3" fill="#F4A7B9"/>
+  <!-- 부츠 -->
+  <rect x="13" y="51" width="10" height="6" rx="3" fill="#C2185B"/>
+  <rect x="27" y="51" width="10" height="6" rx="3" fill="#C2185B"/>
+
+  <!-- 치마 -->
+  <path d="M 10 36 Q 25 50 40 36 L 38 28 Q 25 34 12 28 Z" fill="#E91E8C"/>
+  <path d="M 10 36 Q 25 50 40 36 L 38 30 Q 25 36 12 30 Z" fill="#F06292" opacity="0.5"/>
 
   <!-- 몸통 -->
-  <rect x="10" y="26" width="30" height="22" rx="6" fill="#4A80E0"/>
-  <!-- 가슴 패널 -->
-  <rect x="16" y="30" width="18" height="12" rx="3" fill="#2A5ABF"/>
-  <!-- 패널 버튼들 -->
-  <circle cx="20" cy="34" r="2.5" fill="#FF4444"/>
-  <circle cx="25" cy="34" r="2.5" fill="#44FF88"/>
-  <circle cx="30" cy="34" r="2.5" fill="#FFDD00"/>
-  <!-- 패널 선 -->
-  <rect x="17" y="39" width="16" height="2" rx="1" fill="#1A3A8F"/>
+  <rect x="12" y="22" width="26" height="18" rx="6" fill="#F8BBD0"/>
+  <!-- 옷 -->
+  <rect x="12" y="22" width="26" height="18" rx="6" fill="#E91E8C" opacity="0.85"/>
+  <!-- 리본 장식 -->
+  <polygon points="25,24 22,20 19,24" fill="#FF80AB"/>
+  <polygon points="25,24 28,20 31,24" fill="#FF80AB"/>
+  <circle cx="25" cy="24" r="2.5" fill="#FF4081"/>
 
   <!-- 팔 왼쪽 -->
-  <rect x="2" y="28" width="9" height="14" rx="4" fill="#4A80E0"/>
-  <circle cx="6" cy="43" r="4" fill="#3A6BC4"/>
+  <rect x="3" y="24" width="10" height="12" rx="5" fill="#F8BBD0"/>
   <!-- 팔 오른쪽 -->
-  <rect x="39" y="28" width="9" height="14" rx="4" fill="#4A80E0"/>
-  <circle cx="44" cy="43" r="4" fill="#3A6BC4"/>
+  <rect x="37" y="24" width="10" height="12" rx="5" fill="#F8BBD0"/>
+  <!-- 손 -->
+  <circle cx="8" cy="37" r="4" fill="#F8BBD0"/>
+  <circle cx="42" cy="37" r="4" fill="#F8BBD0"/>
 
-  <!-- 제트팩 -->
-  <rect x="12" y="27" width="7" height="16" rx="3" fill="#2A5ABF"/>
-  <rect x="31" y="27" width="7" height="16" rx="3" fill="#2A5ABF"/>
+  <!-- 목 -->
+  <rect x="21" y="18" width="8" height="6" rx="3" fill="#F8BBD0"/>
 
-  <!-- 헬멧 -->
-  <circle cx="25" cy="18" r="14" fill="#4A80E0"/>
-  <!-- 바이저 -->
-  <ellipse cx="25" cy="18" rx="10" ry="9" fill="#88CCFF" opacity="0.85"/>
-  <!-- 바이저 반사 -->
-  <ellipse cx="21" cy="14" rx="4" ry="3" fill="white" opacity="0.35"/>
+  <!-- 머리 -->
+  <ellipse cx="25" cy="13" rx="14" ry="13" fill="#F8BBD0"/>
+
+  <!-- 머리카락 (뒤) -->
+  <ellipse cx="25" cy="10" rx="14" ry="11" fill="#6D4C41"/>
+  <!-- 앞머리 -->
+  <path d="M 11 10 Q 13 2 25 3 Q 37 2 39 10 Q 33 5 25 6 Q 17 5 11 10 Z" fill="#6D4C41"/>
+  <!-- 머리카락 옆 -->
+  <ellipse cx="11" cy="15" rx="4" ry="8" fill="#6D4C41"/>
+  <ellipse cx="39" cy="15" rx="4" ry="8" fill="#6D4C41"/>
+  <!-- 앞머리 가닥 -->
+  <path d="M 16 6 Q 15 12 17 14" stroke="#5D4037" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M 22 4 Q 21 11 23 14" stroke="#5D4037" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+  <!-- 얼굴 -->
+  <ellipse cx="25" cy="15" rx="11" ry="10" fill="#F8BBD0"/>
+
+  <!-- 눈썹 -->
+  <path d="M 19 11 Q 21 10 23 11" stroke="#5D4037" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <path d="M 27 11 Q 29 10 31 11" stroke="#5D4037" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+
   <!-- 눈 -->
-  <circle cx="21" cy="18" r="2.5" fill="#1A2A6F"/>
-  <circle cx="29" cy="18" r="2.5" fill="#1A2A6F"/>
+  <ellipse cx="21" cy="14" rx="3" ry="3.5" fill="white"/>
+  <ellipse cx="29" cy="14" rx="3" ry="3.5" fill="white"/>
+  <circle cx="21" cy="15" r="2" fill="#7B1FA2"/>
+  <circle cx="29" cy="15" r="2" fill="#7B1FA2"/>
+  <circle cx="21" cy="14.5" r="1" fill="#1A0030"/>
+  <circle cx="29" cy="14.5" r="1" fill="#1A0030"/>
   <!-- 눈 하이라이트 -->
-  <circle cx="22" cy="17" r="0.9" fill="white"/>
-  <circle cx="30" cy="17" r="0.9" fill="white"/>
+  <circle cx="22" cy="13.5" r="0.8" fill="white"/>
+  <circle cx="30" cy="13.5" r="0.8" fill="white"/>
+
+  <!-- 볼터치 -->
+  <ellipse cx="18" cy="18" rx="3" ry="2" fill="#FF80AB" opacity="0.45"/>
+  <ellipse cx="32" cy="18" rx="3" ry="2" fill="#FF80AB" opacity="0.45"/>
+
   <!-- 입 -->
-  <path d="M 21 22 Q 25 25 29 22" stroke="#1A2A6F" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-  <!-- 헬멧 테두리 -->
-  <circle cx="25" cy="18" r="14" fill="none" stroke="#2A5ABF" stroke-width="2"/>
-  <!-- 안테나 -->
-  <line x1="25" y1="4" x2="25" y2="10" stroke="#4A80E0" stroke-width="2"/>
-  <circle cx="25" cy="3" r="2.5" fill="#FF4444"/>
+  <path d="M 22 20 Q 25 22.5 28 20" stroke="#E91E8C" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+
+  <!-- 머리핀 -->
+  <ellipse cx="34" cy="8" rx="4" ry="3" fill="#FF4081" transform="rotate(-30 34 8)"/>
+  <ellipse cx="36" cy="6" rx="4" ry="3" fill="#FF80AB" transform="rotate(-30 36 6)"/>
+  <circle cx="35" cy="7" r="2" fill="#FF4081"/>
 </svg>
