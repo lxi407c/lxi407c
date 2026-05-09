@@ -68,7 +68,7 @@ func _setup_background() -> void:
 func _setup_player() -> void:
 	player = TextureRect.new()
 	player.texture = load("res://player.svg")
-	player.size = Vector2(50, 50)
+	player.size = Vector2(50, 60)
 	player.stretch_mode = TextureRect.STRETCH_SCALE
 	player.visible = false
 	add_child(player)
@@ -252,7 +252,7 @@ func _start_game() -> void:
 		rock.queue_free()
 	rocks.clear()
 
-	player.position = Vector2(SCREEN_W / 2 - 25, SCREEN_H - 100)
+	player.position = Vector2(SCREEN_W / 2 - 25, SCREEN_H - 110)
 	player.modulate = Color.WHITE
 	player.visible = true
 
