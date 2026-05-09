@@ -67,7 +67,7 @@ func _setup_background() -> void:
 # ── 플레이어 ──────────────────────────────────────────
 func _setup_player() -> void:
 	player = TextureRect.new()
-	player.texture = load("res://player.svg")
+	player.texture = load("res://player.svg") as Texture2D
 	player.size = Vector2(50, 60)
 	player.stretch_mode = TextureRect.STRETCH_SCALE
 	player.visible = false
@@ -363,7 +363,7 @@ func _spawn_rocks(delta: float) -> void:
 	if spawn_timer <= 0:
 		spawn_timer = max(0.3, ROCK_SPAWN_INTERVAL - score * 0.01)
 		var rock = TextureRect.new()
-		rock.texture = load("res://rock.svg")
+		rock.texture = load("res://rock.svg") as Texture2D
 		var size = randf_range(30, 55)
 		rock.size = Vector2(size, size)
 		rock.stretch_mode = TextureRect.STRETCH_SCALE
